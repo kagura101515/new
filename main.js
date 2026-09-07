@@ -31,7 +31,7 @@ const gunDangerMaterial = new THREE.MeshBasicMaterial(
   { color: 0xDC143C,
     side:THREE.DoubleSide,
     transparent: true,
-    opacity: 0.7
+    opacity: 0.3
   });
 gunDangerClones = [];
 
