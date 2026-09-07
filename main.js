@@ -22,7 +22,7 @@ scene.add(cube);
 const gunGeometry = new THREE.BoxGeometry(0.2, 0.2, 0.3);
 const gunMaterial = new THREE.MeshBasicMaterial({ color: 0xDC143C });
 const gunClone = []; // 弾を保管する配列
-const gunSpeed = 0.5;
+const gunSpeed = 0.1;
 let gunReady = false;
 let gunTime = 60;
 
