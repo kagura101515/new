@@ -93,7 +93,7 @@ function spawnBullet() {
   gunClone.push({
     mesh: gunCube,
     velocity: gunVelocity,
-    life: 60
+    life: 180
   });
 
   
