@@ -26,12 +26,12 @@ const gunSpeed = 0.1;
 let gunReady = false;
 let gunTime = 60;
 
-const gunDangerGeometry = new THREE.RingGeometry(3, 13, 128);
+const gunDangerGeometry = new THREE.RingGeometry(3, 15, 128);
 const gunDangerMaterial = new THREE.MeshBasicMaterial(
   { color: 0xDC143C,
     side:THREE.DoubleSide,
     transparent: true,
-    opacity: 0.5
+    opacity: 0.7
   });
 gunDangerClones = [];
 
