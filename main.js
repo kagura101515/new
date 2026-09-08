@@ -35,6 +35,14 @@ const gunDangerMaterial = new THREE.MeshBasicMaterial(
   });
 gunDangerClones = [];
 
+const gunDanger2Geometry = new THREE.RingGeometry(3, 15, 128);
+const gunDanger2Material = new THREE.MeshBasicMaterial(
+  {color: THREE.DoubleSide,
+  transparent: true,
+   opacity: 0.3}
+);
+gunDanger2Clones = [];
+
 
 // 滑らかな円運動のためのパラメーター
 let currentAngle = 0;
@@ -70,11 +78,27 @@ function spawnGunDanger() {
     gunDanger.position.y = 0.1;
     scene.add(gunDanger);
     gunDangerClones.push({
-      mesh: gunDanger
+      mesh: gunDanger,
+      life: 60
     });
    
   }
 };
+
+function spawnGunDanger2(){
+  for(let gunDanger2Count = 1; gunDanger2Count > 0; gunDangerCount--){
+    const gunDanger2 = new THREE.Mesh(gunDanger2Geometry, gunDanger2Material);
+    gunDanger2.rotation.x = Math.PI / -2;
+    gunDanger2.rotation.y = 0.1;
+    scene.add(gunDanger2);
+    gunDanger2Clones.push({
+      mesh: gunDanger2,
+      life: 60
+    });
+  }
+  
+};
+
 
 function spawnBullet() {
   for (let gunCloneCount = 60;  gunCloneCount > 0; gunCloneCount--){
@@ -93,7 +117,7 @@ function spawnBullet() {
   gunClone.push({
     mesh: gunCube,
     velocity: gunVelocity,
-    life: 180
+    life: 60
   });
 
   
@@ -113,6 +137,33 @@ function animate() {
   cube.position.z = orbitRadius * Math.cos(currentAngle);
   cube.position.y = 0.5;
   cube.lookAt(0, 0, 0);
+
+
+  //gunDager
+  for (let i = gunDangerClones.length - 1; i >= 0; i--){
+    const gunDangerItem = gunDangerClones[i];
+
+    gunDangerItem.life--;
+    
+    if(gunDangerItem.life <= 0){
+      spawnGunDanger2();
+    }
+  }
+
+  for (let i = gunDanger2Clones.length - 1; i >= 0; i--){
+    const gunDanger2Item = gunDanger2Clones[i];
+    gunDanger2Item.life--;
+    if (gunDanger2Item.life <= 0){
+      scene.remove(gunDangerItem.mesh);
+      gunDangerItem.mesh.geometry.dispose();
+      gunDangerClones.splice(i, 1);
+      
+      scene.remove(gunDanger2Item.mesh);
+      gunDanger2Item.Mmesh.geometry.dispose();
+      gunDanger2Clones.splice();
+      
+    }
+  }
 
   // 3. 弾の移動 & 寿命（life）管理
   // 配列を後ろから安全にループ
@@ -155,3 +206,4 @@ gunTime--
 }
 
 animate();
+
