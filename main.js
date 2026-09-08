@@ -79,7 +79,7 @@ function spawnGunDanger() {
     scene.add(gunDanger);
     gunDangerClones.push({
       mesh: gunDanger,
-      life: 60
+      life: 120
     });
    
   }
@@ -144,20 +144,26 @@ function animate() {
     const gunDangerItem = gunDangerClones[i];
 
     gunDangerItem.life--;
-    
-    if(gunDangerItem.life = 0){
+
+    if (gunDangerItem.life = 60){
       spawnGunDanger2();
+    
+    }
+    
+      if(gunDangerItem.life = 0){ 
+      
+      scene.remove(gunDangerItem.mesh);
+      gunDangerItem.mesh.geometry.dispose();
+      gunDangerClones.splice(i, 1);
+      
     }
   }
 
   for (let i = gunDanger2Clones.length - 1; i >= 0; i--){
     const gunDanger2Item = gunDanger2Clones[i];
     gunDanger2Item.life--;
+
     if (gunDanger2Item.life = 0){
-      scene.remove(gunDangerItem.mesh);
-      gunDangerItem.mesh.geometry.dispose();
-      gunDangerClones.splice(i, 1);
-      
       scene.remove(gunDanger2Item.mesh);
       gunDanger2Item.mesh.geometry.dispose();
       gunDanger2Clones.splice(i, 1);
