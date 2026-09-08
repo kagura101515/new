@@ -146,12 +146,12 @@ function animate() {
 
     gunDangerItem.life--;
 
-    if (gunDangerItem.life = 60){
+    if (gunDangerItem.life === 60){
       spawnGunDanger2();
     
     }
     
-      if(gunDangerItem.life = 0){ 
+      if(gunDangerItem.life === 0){ 
       
       scene.remove(gunDangerItem.mesh);
       gunDangerItem.mesh.geometry.dispose();
