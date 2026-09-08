@@ -186,7 +186,7 @@ function animate() {
 gunTime--
   if (gunTime === 0){
     gunReady = true;
-    gunTime = 300;
+    gunTime = 1200;
   };
   
   if (gunReady === true){
