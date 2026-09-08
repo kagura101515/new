@@ -71,7 +71,7 @@ document.addEventListener('keyup', (event) => {
 
 // 弾を生成する関数（1回呼び出すごとに1発作成）
 function spawnGunDanger() {
-  for (let gunDangerCount = 2; gunDangerCount > 0; gunDangerCount--){
+  for (let gunDangerCount = 1; gunDangerCount > 0; gunDangerCount--){
     const gunDanger = new THREE.Mesh(gunDangerGeometry, 
                                      gunDangerMaterial);
     gunDanger.rotation.x = Math.PI / -2;
