@@ -38,7 +38,7 @@ gunDangerClones = [];
 const gunDanger2Geometry = new THREE.RingGeometry(3, 15, 128);
 const gunDanger2Material = new THREE.MeshBasicMaterial(
   {color: 0xDC143C,
-   THREE.DoubleSide,
+   side: THREE.DoubleSide,
   transparent: true,
    opacity: 0.6}
 );
