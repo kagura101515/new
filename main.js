@@ -160,7 +160,7 @@ function animate() {
       
       scene.remove(gunDanger2Item.mesh);
       gunDanger2Item.Mmesh.geometry.dispose();
-      gunDanger2Clones.splice();
+      gunDanger2Clones.splice(i, 1);
       
     }
   }
