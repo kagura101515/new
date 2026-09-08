@@ -86,7 +86,7 @@ function spawnGunDanger() {
 };
 
 function spawnGunDanger2(){
-  for(let gunDanger2Count = 1; gunDanger2Count > 0; gunDangerCount--){
+  for(let gunDanger2Count = 1; gunDanger2Count > 0; gunDanger2Count--){
     const gunDanger2 = new THREE.Mesh(gunDanger2Geometry, gunDanger2Material);
     gunDanger2.rotation.x = Math.PI / -2;
     gunDanger2.rotation.y = 0.1;
