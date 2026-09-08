@@ -165,6 +165,7 @@ function animate() {
     gunDanger2Item.life--;
 
     if (gunDanger2Item.life === 0){
+      spawnBullet();
       scene.remove(gunDanger2Item.mesh);
       gunDanger2Item.mesh.geometry.dispose();
       gunDanger2Clones.splice(i, 1);
