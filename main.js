@@ -163,7 +163,7 @@ function animate() {
     const gunDanger2Item = gunDanger2Clones[i];
     gunDanger2Item.life--;
 
-    if (gunDanger2Item.life = 0){
+    if (gunDanger2Item.life === 0){
       scene.remove(gunDanger2Item.mesh);
       gunDanger2Item.mesh.geometry.dispose();
       gunDanger2Clones.splice(i, 1);
@@ -183,7 +183,7 @@ function animate() {
     item.life--;
 
     // 寿命が0以下になったら削除
-    if (item.life <= 0) {
+    if (item.life === 0) {
       scene.remove(item.mesh);       // 画面から消す
       item.mesh.geometry.dispose();  // メモリを解放
       gunClone.splice(i, 1);         // 配列から取り除く
