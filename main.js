@@ -145,7 +145,7 @@ function animate() {
 
     gunDangerItem.life--;
     
-    if(gunDangerItem.life <= 0){
+    if(gunDangerItem.life = 0){
       spawnGunDanger2();
     }
   }
