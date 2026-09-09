@@ -1,14 +1,20 @@
+//初期設定
 const scene = new THREE.Scene();
 
-const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-camera.position.set(0, 3, 10);
+const camera = new THREE.PerspectiveCamera(
+  75,
+  window.innerWidth / window.innerHeight,
+  0.1,
+  1000,
+);
+camera.position.set(0, 5, 10);
 
 const renderer = new THREE.WebGLRenderer({
-  canvas: document.querySelector('#myCanvas')
+  canvas: document.querySelector("#myCanvas"),
 });
 renderer.setSize(window.innerWidth, window.innerHeight);
 
-// 背景のグリッド
+// 目盛
 const gridHelper = new THREE.GridHelper(30, 60, 0x888888, 0x444444);
 scene.add(gridHelper);
 
@@ -20,31 +26,40 @@ scene.add(cube);
 
 // 弾の設定
 const gunGeometry = new THREE.BoxGeometry(0.2, 0.2, 0.3);
-const gunMaterial = new THREE.MeshBasicMaterial({ color: 0xDC143C });
+const gunMaterial = new THREE.MeshBasicMaterial({ color: 0xdc143c });
 const gunClone = []; // 弾を保管する配列
 const gunSpeed = 0.15;
 let gunReady = false;
 let gunTime = 60;
 
-const gunDangerGeometry = new THREE.RingGeometry(3, 15, 128);
-const gunDangerMaterial = new THREE.MeshBasicMaterial(
-  { color: 0xDC143C,
-    side:THREE.DoubleSide,
-    transparent: true,
-    opacity: 0.3
-  });
+//弾危機
+const gunDangerGeometry = new THREE.RingGeometry(0, 12, 128);
+const gunDangerMaterial = new THREE.MeshBasicMaterial({
+  color: 0xdc143c,
+  side: THREE.DoubleSide,
+  transparent: true,
+  opacity: 0.3,
+});
 gunDangerClones = [];
 
-const gunDanger2Geometry = new THREE.RingGeometry(3, 15, 128);
-const gunDanger2Material = new THREE.MeshBasicMaterial(
-  {color: 0xDC143C,
-   side: THREE.DoubleSide,
+//弾危機2
+const gunDanger2Geometry = new THREE.RingGeometry(0, 12, 128);
+const gunDanger2Material = new THREE.MeshBasicMaterial({
+  color: 0xdc143c,
+  side: THREE.DoubleSide,
   transparent: true,
-   opacity: 0.6}
-);
+  opacity: 0.6,
+});
 gunDanger2Clones = [];
 
-
+const planeDangerGeometry = new THREE.planeGometry(2, 5);
+const planeDangerMaterial = new THREE.MeshBasicMaterial({
+  color: 0xdc143c,
+  side: THREE.DoubleSide,
+  transparent: true,
+  opacity: 0.3,
+});
+planeDangerClones = [];
 // 滑らかな円運動のためのパラメーター
 let currentAngle = 0;
 let angularVelocity = 0;
@@ -56,79 +71,89 @@ const orbitRadiusCamera = orbitRadius + 5;
 // キーの状態管理
 const keysPressed = {};
 
-document.addEventListener('keydown', (event) => {
+document.addEventListener("keydown", (event) => {
   const key = event.key.toLowerCase();
   keysPressed[key] = true;
 
   // スペースキーを押した瞬間に弾を1発生成
-  if (event.code === 'Space') {
+  if (event.code === "Space") {
     spawnBullet();
   }
 });
 
-document.addEventListener('keyup', (event) => {
+document.addEventListener("keyup", (event) => {
   keysPressed[event.key.toLowerCase()] = false;
 });
 
-// 弾を生成する関数（1回呼び出すごとに1発作成）
+// 弾危機　生成
 function spawnGunDanger() {
-  for (let gunDangerCount = 1; gunDangerCount > 0; gunDangerCount--){
-    const gunDanger = new THREE.Mesh(gunDangerGeometry, 
-                                     gunDangerMaterial);
+  for (let gunDangerCount = 1; gunDangerCount > 0; gunDangerCount--) {
+    const gunDanger = new THREE.Mesh(gunDangerGeometry, gunDangerMaterial);
     gunDanger.rotation.x = Math.PI / -2;
     gunDanger.position.y = 0.1;
+    gunDanger.scale.setScalar(0);
     scene.add(gunDanger);
     gunDangerClones.push({
       mesh: gunDanger,
-      life: 120
+      life: 120,
     });
-   
   }
-};
+}
 
-function spawnGunDanger2(){
-  for(let gunDanger2Count = 1; gunDanger2Count > 0; gunDanger2Count--){
+function spawnGunDanger2() {
+  for (let gunDanger2Count = 1; gunDanger2Count > 0; gunDanger2Count--) {
     const gunDanger2 = new THREE.Mesh(gunDanger2Geometry, gunDanger2Material);
     gunDanger2.rotation.x = Math.PI / -2;
-    gunDanger2.position.y = 0.1;
+    gunDanger2.position.y = 0.11;
+    gunDanger2.scale.setScalar(0);
     scene.add(gunDanger2);
     gunDanger2Clones.push({
       mesh: gunDanger2,
-      life: 60
+      life: 60,
     });
   }
-  
-};
-
+}
 
 function spawnBullet() {
-  for (let gunCloneCount = 60;  gunCloneCount > 0; gunCloneCount--){
-  const gunCube = new THREE.Mesh(gunGeometry, gunMaterial);
-  scene.add(gunCube);
+  for (let gunCloneCount = 60; gunCloneCount > 0; gunCloneCount--) {
+    const gunCube = new THREE.Mesh(gunGeometry, gunMaterial);
+    scene.add(gunCube);
 
-  const gunDirection = new THREE.Vector3(
-    Math.random() - 0.5,
-    0,
-    Math.random() - 0.5
-  ).normalize();
+    const gunDirection = new THREE.Vector3(
+      Math.random() - 0.5,
+      0,
+      Math.random() - 0.5,
+    ).normalize();
 
-  const gunVelocity = gunDirection.multiplyScalar(gunSpeed);
+    const gunVelocity = gunDirection.multiplyScalar(gunSpeed);
 
-  // 配列に追加（lifeをフレーム数で指定：60 = 約1秒）
-  gunClone.push({
-    mesh: gunCube,
-    velocity: gunVelocity,
-    life: 180
-  });
+    // 配列に追加（lifeをフレーム数で指定：60 = 約1秒）
+    gunClone.push({
+      mesh: gunCube,
+      velocity: gunVelocity,
+      life: 180,
+    });
+  }
+}
 
-  
-  }}
+function spawnPlaneDanger() {
+  for (let planeCloneCount = 4; planeCloneCount > 0; planeCloneCount--) {
+    const planeDanger = new THREE.Mesh(
+      planeDangerGeometry,
+      planeDangerMaterial,
+    );
+    scene.add(planeDanger);
+
+    planeDangerClones.push({mesh: planeDanger,
+                           life: 180});
+  }
+};
 
 // --- 描画・更新ループ ---
 function animate() {
   // 1. 移動操作（A/Dキー）
-  if (keysPressed['a']) angularVelocity -= acceleration;
-  if (keysPressed['d']) angularVelocity += acceleration;
+  if (keysPressed["a"]) angularVelocity -= acceleration;
+  if (keysPressed["d"]) angularVelocity += acceleration;
 
   currentAngle += angularVelocity;
   angularVelocity *= friction;
@@ -139,37 +164,37 @@ function animate() {
   cube.position.y = 0.5;
   cube.lookAt(0, 0, 0);
 
-
   //gunDager
-  for (let i = gunDangerClones.length - 1; i >= 0; i--){
+  for (let i = gunDangerClones.length - 1; i >= 0; i--) {
     const gunDangerItem = gunDangerClones[i];
 
     gunDangerItem.life--;
 
-    if (gunDangerItem.life === 60){
-      spawnGunDanger2();
-    
+    if (gunDangerItem.life >= 60) {
+      gunDangerItem.mesh.scale.setScalar(gunDangerItem.mesh.scale.x + 1 / 60);
     }
-    
-      if(gunDangerItem.life === 0){ 
-      
+    if (gunDangerItem.life === 60) {
+      spawnGunDanger2();
+    }
+
+    if (gunDangerItem.life === 0) {
       scene.remove(gunDangerItem.mesh);
       gunDangerItem.mesh.geometry.dispose();
       gunDangerClones.splice(i, 1);
-      
     }
   }
 
-  for (let i = gunDanger2Clones.length - 1; i >= 0; i--){
+  for (let i = gunDanger2Clones.length - 1; i >= 0; i--) {
     const gunDanger2Item = gunDanger2Clones[i];
     gunDanger2Item.life--;
 
-    if (gunDanger2Item.life === 0){
+    gunDanger2Item.mesh.scale.setScalar(gunDanger2Item.mesh.scale.x + 1 / 60);
+
+    if (gunDanger2Item.life === 0) {
       spawnBullet();
       scene.remove(gunDanger2Item.mesh);
       gunDanger2Item.mesh.geometry.dispose();
       gunDanger2Clones.splice(i, 1);
-      
     }
   }
 
@@ -186,23 +211,22 @@ function animate() {
 
     // 寿命が0以下になったら削除
     if (item.life === 0) {
-      scene.remove(item.mesh);       // 画面から消す
-      item.mesh.geometry.dispose();  // メモリを解放
-      gunClone.splice(i, 1);         // 配列から取り除く
+      scene.remove(item.mesh); // 画面から消す
+      item.mesh.geometry.dispose(); // メモリを解放
+      gunClone.splice(i, 1); // 配列から取り除く
     }
   }
-gunTime--
-  if (gunTime === 0){
+  gunTime--;
+  if (gunTime === 0) {
     gunReady = true;
     gunTime = 300;
-  };
-  
-  if (gunReady === true){
-    spawnGunDanger()
+  }
+
+  if (gunReady === true) {
+    spawnGunDanger();
+    spawnPlaneDanger();
     gunReady = false;
-  };
-  
-  
+  }
 
   // 4. カメラの追従
   camera.lookAt(cube.position);
@@ -214,4 +238,3 @@ gunTime--
 }
 
 animate();
-
