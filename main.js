@@ -32,7 +32,7 @@ const gunSpeed = 0.15;
 let gunReady = false;
 let gunTime = 60;
 
-//弾危機
+// 弾危機（変数宣言に let を追加）
 const gunDangerGeometry = new THREE.RingGeometry(0, 12, 128);
 const gunDangerMaterial = new THREE.MeshBasicMaterial({
   color: 0xdc143c,
@@ -40,9 +40,9 @@ const gunDangerMaterial = new THREE.MeshBasicMaterial({
   transparent: true,
   opacity: 0.3,
 });
-gunDangerClones = [];
+let gunDangerClones = [];
 
-//弾危機2
+// 弾危機2（変数宣言に let を追加）
 const gunDanger2Geometry = new THREE.RingGeometry(0, 12, 128);
 const gunDanger2Material = new THREE.MeshBasicMaterial({
   color: 0xdc143c,
@@ -50,16 +50,18 @@ const gunDanger2Material = new THREE.MeshBasicMaterial({
   transparent: true,
   opacity: 0.6,
 });
-gunDanger2Clones = [];
+let gunDanger2Clones = [];
 
-const planeDangerGeometry = new THREE.planeGometry(2, 5);
+// 修正点1: planeGometry -> PlaneGeometry に修正 & let を追加
+const planeDangerGeometry = new THREE.PlaneGeometry(2, 5);
 const planeDangerMaterial = new THREE.MeshBasicMaterial({
   color: 0xdc143c,
   side: THREE.DoubleSide,
   transparent: true,
   opacity: 0.3,
 });
-planeDangerClones = [];
+let planeDangerClones = [];
+
 // 滑らかな円運動のためのパラメーター
 let currentAngle = 0;
 let angularVelocity = 0;
@@ -75,43 +77,34 @@ document.addEventListener("keydown", (event) => {
   const key = event.key.toLowerCase();
   keysPressed[key] = true;
 
-  // スペースキーを押した瞬間に弾を1発生成
-  if (event.code === "Space") {
-    spawnBullet();
-  }
-});
 
 document.addEventListener("keyup", (event) => {
   keysPressed[event.key.toLowerCase()] = false;
 });
 
-// 弾危機　生成
+// 弾危機 生成
 function spawnGunDanger() {
-  for (let gunDangerCount = 1; gunDangerCount > 0; gunDangerCount--) {
-    const gunDanger = new THREE.Mesh(gunDangerGeometry, gunDangerMaterial);
-    gunDanger.rotation.x = Math.PI / -2;
-    gunDanger.position.y = 0.1;
-    gunDanger.scale.setScalar(0);
-    scene.add(gunDanger);
-    gunDangerClones.push({
-      mesh: gunDanger,
-      life: 120,
-    });
-  }
+  const gunDanger = new THREE.Mesh(gunDangerGeometry, gunDangerMaterial);
+  gunDanger.rotation.x = Math.PI / -2;
+  gunDanger.position.y = 0.1;
+  gunDanger.scale.setScalar(0);
+  scene.add(gunDanger);
+  gunDangerClones.push({
+    mesh: gunDanger,
+    life: 120,
+  });
 }
 
 function spawnGunDanger2() {
-  for (let gunDanger2Count = 1; gunDanger2Count > 0; gunDanger2Count--) {
-    const gunDanger2 = new THREE.Mesh(gunDanger2Geometry, gunDanger2Material);
-    gunDanger2.rotation.x = Math.PI / -2;
-    gunDanger2.position.y = 0.11;
-    gunDanger2.scale.setScalar(0);
-    scene.add(gunDanger2);
-    gunDanger2Clones.push({
-      mesh: gunDanger2,
-      life: 60,
-    });
-  }
+  const gunDanger2 = new THREE.Mesh(gunDanger2Geometry, gunDanger2Material);
+  gunDanger2.rotation.x = Math.PI / -2;
+  gunDanger2.position.y = 0.11;
+  gunDanger2.scale.setScalar(0);
+  scene.add(gunDanger2);
+  gunDanger2Clones.push({
+    mesh: gunDanger2,
+    life: 60,
+  });
 }
 
 function spawnBullet() {
@@ -127,7 +120,6 @@ function spawnBullet() {
 
     const gunVelocity = gunDirection.multiplyScalar(gunSpeed);
 
-    // 配列に追加（lifeをフレーム数で指定：60 = 約1秒）
     gunClone.push({
       mesh: gunCube,
       velocity: gunVelocity,
@@ -142,12 +134,20 @@ function spawnPlaneDanger() {
       planeDangerGeometry,
       planeDangerMaterial,
     );
+    
+    planeDanger.rotation.x = Math.PI / 2;
+    planeDanger.lookAt(0,0,0);
+    planeDanger.position.x = 5 * Math.sin(Math.random() * 10 -5);
+    planeDanger.position.z = 5 * Math.cos(Math.random() * 10 -5);
     scene.add(planeDanger);
+    
 
-    planeDangerClones.push({mesh: planeDanger,
-                           life: 180});
+    planeDangerClones.push({
+      mesh: planeDanger,
+      life: 180,
+    });
   }
-};
+}
 
 // --- 描画・更新ループ ---
 function animate() {
@@ -164,7 +164,7 @@ function animate() {
   cube.position.y = 0.5;
   cube.lookAt(0, 0, 0);
 
-  //gunDager
+  // 弾危機（1段階目）の制御
   for (let i = gunDangerClones.length - 1; i >= 0; i--) {
     const gunDangerItem = gunDangerClones[i];
 
@@ -184,6 +184,7 @@ function animate() {
     }
   }
 
+  // 弾危機（2段階目）の制御
   for (let i = gunDanger2Clones.length - 1; i >= 0; i--) {
     const gunDanger2Item = gunDanger2Clones[i];
     gunDanger2Item.life--;
@@ -199,7 +200,6 @@ function animate() {
   }
 
   // 3. 弾の移動 & 寿命（life）管理
-  // 配列を後ろから安全にループ
   for (let i = gunClone.length - 1; i >= 0; i--) {
     const item = gunClone[i];
 
@@ -210,12 +210,19 @@ function animate() {
     item.life--;
 
     // 寿命が0以下になったら削除
-    if (item.life === 0) {
+    if (item.life <= 0) {
       scene.remove(item.mesh); // 画面から消す
       item.mesh.geometry.dispose(); // メモリを解放
       gunClone.splice(i, 1); // 配列から取り除く
     }
-  }
+  };
+
+  //for (let i = planeDangerClones.length - 1; i >= 0; i--) {
+    
+    
+ // };
+
+  // タイマー管理
   gunTime--;
   if (gunTime === 0) {
     gunReady = true;
