@@ -75,7 +75,7 @@ const keysPressed = {};
 
 document.addEventListener("keydown", (event) => {
   const key = event.key.toLowerCase();
-  keysPressed[key] = true;
+  keysPressed[key] = true;});
 
 
 document.addEventListener("keyup", (event) => {
@@ -134,12 +134,13 @@ function spawnPlaneDanger() {
       planeDangerGeometry,
       planeDangerMaterial,
     );
-    
-    planeDanger.rotation.x = Math.PI / 2;
+    planeDanger.position.x = 5 * Math.sin(Math.random() * Math.PI * 2);
+    planeDanger.position.z = 5 * Math.cos(Math.random() * Math.PI * 2);
     planeDanger.lookAt(0,0,0);
-    planeDanger.position.x = 5 * Math.sin(Math.random() * 10 -5);
-    planeDanger.position.z = 5 * Math.cos(Math.random() * 10 -5);
+    planeDanger.rotation.x = THREE.MathUtils.degToRad(90);
     scene.add(planeDanger);
+
+    
     
 
     planeDangerClones.push({
